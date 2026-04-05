@@ -17,7 +17,7 @@ const Dashboard = () => {
           `http://localhost:3002/repo/user/${userId}`
         );
         const data = await response.json();
-        setRepositories(data.repositories);
+        setRepositories(data.repositories ?? []);
       } catch (err) {
         console.error("Error while fecthing repositories: ", err);
       }

@@ -45,12 +45,16 @@ async function signup(req, res) {
 
     const result = await usersCollection.insertOne(newUser);
 
+    if (!process.env.JWT_SECRET_KEY) {
+      return res.status(500).json({ message: "Server misconfiguration: JWT_SECRET_KEY is not set." });
+    }
+
     const token = jwt.sign(
-      { id: result.insertId },
+      { id: result.insertedId },
       process.env.JWT_SECRET_KEY,
       { expiresIn: "1h" }
     );
-    res.json({ token, userId: result.insertId });
+    res.json({ token, userId: result.insertedId });
   } catch (err) {
     console.error("Error during signup : ", err.message);
     res.status(500).send("Server error");
@@ -72,6 +76,10 @@ async function login(req, res) {
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(400).json({ message: "Invalid credentials!" });
+    }
+
+    if (!process.env.JWT_SECRET_KEY) {
+      return res.status(500).json({ message: "Server misconfiguration: JWT_SECRET_KEY is not set." });
     }
 
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET_KEY, {
@@ -144,11 +152,11 @@ async function updateUserProfile(req, res) {
       { $set: updateFields },
       { returnDocument: "after" }
     );
-    if (!result.value) {
+    if (!result) {
       return res.status(404).json({ message: "User not found!" });
     }
 
-    res.send(result.value);
+    res.send(result);
   } catch (err) {
     console.error("Error during updating : ", err.message);
     res.status(500).send("Server error!");
@@ -167,7 +175,7 @@ async function deleteUserProfile(req, res) {
       _id: new ObjectId(currentID),
     });
 
-    if (result.deleteCount == 0) {
+    if (result.deletedCount === 0) {
       return res.status(404).json({ message: "User not found!" });
     }
 
