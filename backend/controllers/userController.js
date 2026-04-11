@@ -1,10 +1,8 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const { MongoClient } = require("mongodb");
-const dotenv = require("dotenv");
 var ObjectId = require("mongodb").ObjectId;
 
-dotenv.config();
 const uri = process.env.MONGODB_URI;
 
 let client;
@@ -19,20 +17,22 @@ async function connectClient() {
   }
 }
 
+async function getUsersCollection() {
+  await connectClient();
+  return client.db("githubclone").collection("users");
+}
+
 async function signup(req, res) {
   const { username, password, email } = req.body;
   try {
-    await connectClient();
-    const db = client.db("githubclone");
-    const usersCollection = db.collection("users");
+    const usersCollection = await getUsersCollection();
 
     const user = await usersCollection.findOne({ username });
     if (user) {
       return res.status(400).json({ message: "User already exists!" });
     }
 
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     const newUser = {
       username,
@@ -64,9 +64,7 @@ async function signup(req, res) {
 async function login(req, res) {
   const { email, password } = req.body;
   try {
-    await connectClient();
-    const db = client.db("githubclone");
-    const usersCollection = db.collection("users");
+    const usersCollection = await getUsersCollection();
 
     const user = await usersCollection.findOne({ email });
     if (!user) {
@@ -94,11 +92,8 @@ async function login(req, res) {
 
 async function getAllUsers(req, res) {
   try {
-    await connectClient();
-    const db = client.db("githubclone");
-    const usersCollection = db.collection("users");
-
-    const users = await usersCollection.find({}).toArray();
+    const usersCollection = await getUsersCollection();
+    const users = await usersCollection.find({}, { projection: { password: 0 } }).toArray();
     res.json(users);
   } catch (err) {
     console.error("Error during fetching : ", err.message);
@@ -110,13 +105,12 @@ async function getUserProfile(req, res) {
   const currentID = req.params.id;
 
   try {
-    await connectClient();
-    const db = client.db("githubclone");
-    const usersCollection = db.collection("users");
+    const usersCollection = await getUsersCollection();
 
-    const user = await usersCollection.findOne({
-      _id: new ObjectId(currentID),
-    });
+    const user = await usersCollection.findOne(
+      { _id: new ObjectId(currentID) },
+      { projection: { password: 0 } }
+    );
 
     if (!user) {
       return res.status(404).json({ message: "User not found!" });
@@ -134,21 +128,15 @@ async function updateUserProfile(req, res) {
   const { email, password } = req.body;
 
   try {
-    await connectClient();
-    const db = client.db("githubclone");
-    const usersCollection = db.collection("users");
+    const usersCollection = await getUsersCollection();
 
     let updateFields = { email };
     if (password) {
-      const salt = await bcrypt.genSalt(10);
-      const hashedPassword = await bcrypt.hash(password, salt);
-      updateFields.password = hashedPassword;
+      updateFields.password = await bcrypt.hash(password, 10);
     }
 
     const result = await usersCollection.findOneAndUpdate(
-      {
-        _id: new ObjectId(currentID),
-      },
+      { _id: new ObjectId(currentID) },
       { $set: updateFields },
       { returnDocument: "after" }
     );
@@ -167,9 +155,7 @@ async function deleteUserProfile(req, res) {
   const currentID = req.params.id;
 
   try {
-    await connectClient();
-    const db = client.db("githubclone");
-    const usersCollection = db.collection("users");
+    const usersCollection = await getUsersCollection();
 
     const result = await usersCollection.deleteOne({
       _id: new ObjectId(currentID),
@@ -181,7 +167,7 @@ async function deleteUserProfile(req, res) {
 
     res.json({ message: "User Profile Deleted!" });
   } catch (err) {
-    console.error("Error during updating : ", err.message);
+    console.error("Error during deleting : ", err.message);
     res.status(500).send("Server error!");
   }
 }

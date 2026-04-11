@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import { useAuth } from "../../authContext";
 
@@ -20,8 +20,8 @@ const Signup = () => {
   const handleSignup = async (e) => {
     e.preventDefault();
 
+    setLoading(true);
     try {
-      setLoading(true);
       const res = await axios.post("http://localhost:3002/signup", {
         email: email,
         password: password,
@@ -32,12 +32,11 @@ const Signup = () => {
       localStorage.setItem("userId", res.data.userId);
 
       setCurrentUser(res.data.userId);
-      setLoading(false);
-
       window.location.href = "/";
     } catch (err) {
       console.error(err);
       alert("Signup Failed!");
+    } finally {
       setLoading(false);
     }
   };
@@ -86,7 +85,7 @@ const Signup = () => {
             />
           </div>
 
-          <div className="div">
+          <div>
             <label className="label">Password</label>
             <input
               autoComplete="off"
