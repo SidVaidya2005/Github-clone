@@ -16,8 +16,59 @@ A full-stack GitHub replica built with the MERN stack, featuring a **custom vers
 
 ```
 .
-├── backend/        Node.js/Express HTTP server + apnaGit CLI
-└── frontend/       React 18 SPA (Vite)
+├── backend/
+│   ├── config/
+│   │   └── aws-config.js           AWS S3 client setup (region + bucket)
+│   ├── controllers/
+│   │   ├── userController.js       Auth: signup, login, profile CRUD (raw MongoClient)
+│   ├── repoController.js           Repository CRUD (Mongoose)
+│   │   ├── issueController.js      Issue CRUD (Mongoose)
+│   │   ├── init.js                 apnaGit: initialise .apnaGit/ directory
+│   │   ├── add.js                  apnaGit: stage a file
+│   │   ├── commit.js               apnaGit: snapshot staged files with UUID commit ID
+│   │   ├── push.js                 apnaGit: upload commits to S3
+│   │   ├── pull.js                 apnaGit: download commits from S3
+│   │   └── revert.js               apnaGit: restore working directory to a commit
+│   ├── middleware/
+│   │   ├── authMiddleware.js       JWT verification (stub — not yet implemented)
+│   │   └── authorizeMiddleware.js  Role-based authorization (stub — not yet implemented)
+│   ├── models/
+│   │   ├── userModel.js            Mongoose schema: User
+│   │   ├── repoModel.js            Mongoose schema: Repository (embeds content + issue refs)
+│   │   └── issueModel.js           Mongoose schema: Issue
+│   ├── routes/
+│   │   ├── main.router.js          Root router — composes all sub-routers
+│   │   ├── user.router.js          /signup, /login, /userProfile, /allUsers, ...
+│   │   ├── repo.router.js          /repo/create, /repo/all, /repo/:id, ...
+│   │   └── issue.router.js         /issue/create, /issue/all, /issue/:id, ...
+│   ├── index.js                    Entry point: yargs dispatch → HTTP server or VCS CLI
+│   └── package.json
+│
+└── frontend/
+    ├── public/
+    │   └── vite.svg
+    ├── src/
+    │   ├── components/
+    │   │   ├── Navbar.jsx           Top navigation bar (shared across all pages)
+    │   │   ├── navbar.css
+    │   │   ├── auth/
+    │   │   │   ├── Login.jsx        Login form → POST /login
+    │   │   │   ├── Signup.jsx       Signup form → POST /signup
+    │   │   │   └── auth.css
+    │   │   ├── dashboard/
+    │   │   │   ├── Dashboard.jsx    Home page — lists user + all repos
+    │   │   │   └── dashboard.css
+    │   │   └── user/
+    │   │       ├── Profile.jsx      User profile page → GET /userProfile/:id
+    │   │       ├── HeatMap.jsx      Contribution heatmap (@uiw/react-heat-map)
+    │   │       └── profile.css
+    │   ├── authContext.jsx          React Context: currentUser + localStorage hydration
+    │   ├── Routes.jsx               Route definitions + auth guard (useRoutes)
+    │   ├── App.jsx
+    │   ├── main.jsx                 App shell: AuthProvider → BrowserRouter → App
+    │   └── index.css               CSS custom properties (design tokens)
+    ├── index.html
+    └── package.json
 ```
 
 The two apps are fully independent — they share no code and communicate exclusively over HTTP on `localhost:3002`.
