@@ -5,6 +5,20 @@ node_modules/
 .env
 .env.local
 .env.*.local
+.env.production
+.env.development
+
+# ── Build output ───────────────────────────────────────────────
+dist/
+dist-ssr/
+
+# ── Test / coverage ────────────────────────────────────────────
+coverage/
+.nyc_output/
+
+# ── Vite ───────────────────────────────────────────────────────
+*.local
+vite.config.*.timestamp-*
 
 # ── Logs ──────────────────────────────────────────────────────
 logs/
@@ -14,27 +28,6 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
-
-# ── Build output ───────────────────────────────────────────────
-dist/
-dist-ssr/
-build/
-
-# ── Test / coverage ────────────────────────────────────────────
-coverage/
-.nyc_output/
-
-# ── apnaGit VCS ────────────────────────────────────────────────
-# Local .apnaGit repos created by the custom VCS CLI
-.apnaGit/
-
-# ── AWS ────────────────────────────────────────────────────────
-.aws/
-aws-credentials*
-
-# ── Claude Code ────────────────────────────────────────────────
-# Local-only Claude overrides (personal settings, not shared)
-.claude.local.md
 
 # ── OS files ───────────────────────────────────────────────────
 .DS_Store
