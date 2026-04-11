@@ -17,9 +17,7 @@ const Signup = () => {
 
   const { setCurrentUser } = useAuth();
 
-  const handleSignup = async (e) => {
-    e.preventDefault();
-
+  const handleSignup = async () => {
     setLoading(true);
     try {
       const res = await axios.post("http://localhost:3002/signup", {
@@ -35,7 +33,7 @@ const Signup = () => {
       window.location.href = "/";
     } catch (err) {
       console.error(err);
-      alert("Signup Failed!");
+      alert(err.response?.data?.message || "Signup failed. Please try again.");
     } finally {
       setLoading(false);
     }

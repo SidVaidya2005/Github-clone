@@ -15,9 +15,7 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const { setCurrentUser } = useAuth();
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
-
+  const handleLogin = async () => {
     setLoading(true);
     try {
       const res = await axios.post("http://localhost:3002/login", {
@@ -32,7 +30,7 @@ const Login = () => {
       window.location.href = "/";
     } catch (err) {
       console.error(err);
-      alert("Login Failed!");
+      alert(err.response?.data?.message || "Login failed. Please try again.");
     } finally {
       setLoading(false);
     }
