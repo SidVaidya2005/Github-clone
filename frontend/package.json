@@ -16,11 +16,11 @@
     "@primer/react": "^36.27.0",
     "@testing-library/jest-dom": "^6.4.8",
     "@uiw/react-heat-map": "^2.2.2",
-    "axios": "^1.7.3",
+    "axios": "^1.15.0",
     "jsdom": "^24.1.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-router-dom": "^6.25.1",
+    "react-router-dom": "^6.30.3",
     "text-encoding": "^0.7.0"
   },
   "devDependencies": {
@@ -30,14 +30,14 @@
     "@testing-library/user-event": "^14.5.2",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
-    "@vitejs/plugin-react": "^4.3.1",
+    "@vitejs/plugin-react": "^4.7.0",
     "eslint": "^8.57.0",
     "eslint-plugin-react": "^7.34.3",
     "eslint-plugin-react-hooks": "^4.6.2",
     "eslint-plugin-react-refresh": "^0.4.7",
     "install": "^0.13.0",
-    "npm": "^10.8.2",
-    "vite": "^5.3.4",
-    "vitest": "^2.0.5"
+    "npm": "^10.9.8",
+    "vite": "^8.0.8",
+    "vitest": "^4.1.4"
   }
 }
