@@ -28,8 +28,8 @@ Each subdirectory has its own `CLAUDE.md` with commands, env vars, and app-speci
 ## Quick Start
 
 ```bash
-# Backend (terminal 1)
-cd backend && npm install && node index.js start
+# Backend (terminal 1) — create backend/.env first (no .env.example exists, see backend/CLAUDE.md)
+cd backend && npm install && npm start
 
 # Frontend (terminal 2)
 cd frontend && npm install && npm run dev
@@ -40,7 +40,8 @@ Backend must run on `PORT=3002` (frontend API calls are hardcoded to `http://loc
 ## Cross-cutting Architecture
 
 ### Data flow
-Browser → axios (`http://localhost:3002`) → Express routes → Mongoose (MongoDB)
+Browser → HTTP (`http://localhost:3002`) → Express routes → Mongoose (MongoDB)
+> Note: `Login.jsx`/`Profile.jsx` use axios; `Dashboard.jsx` uses native `fetch()`.
 
 Real-time: frontend connects via Socket.io and emits `joinRoom <userId>` to subscribe to user-specific events.
 

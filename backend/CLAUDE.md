@@ -6,7 +6,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ```bash
 npm install
-node index.js start          # Start the HTTP server (defaults to PORT env var or 3000)
+npm start                    # Alias for: node index.js start (defined in package.json scripts)
+node index.js start          # Equivalent long form
 
 # Custom VCS CLI (run from any target directory):
 node index.js init           # Initialize a .apnaGit repo in cwd
@@ -18,6 +19,8 @@ node index.js revert <id>    # Revert to a specific commit
 ```
 
 ## Environment Variables
+
+Create a `backend/.env` file manually — no `.env.example` exists in this directory:
 
 ```
 MONGODB_URI=<MongoDB connection string>

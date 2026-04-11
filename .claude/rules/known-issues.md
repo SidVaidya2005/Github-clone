@@ -56,5 +56,10 @@ Both `signup` and `login` return HTTP 500 if `JWT_SECRET_KEY` is missing. It mus
 ### `commit.json` bleeds on revert
 `revert <id>` copies all files from the commit directory including `commit.json` into the working directory. This file must be deleted manually after each revert.
 
+### `issueController.js` has three broken functions
+- `createIssue` reads `repository` from `req.params.id` but the route `POST /issue/create` has no `:id` param — `repository` is always `undefined`, failing Mongoose validation on every create call.
+- `getAllIssues` also reads `req.params.id` (always `undefined`) — returns all issues instead of filtering by repository.
+- `getAllIssues` and `deleteIssueById` are missing `await` on their Mongoose calls — the DB operation is never awaited, responses are sent before results arrive.
+
 ### `console.log` left in production paths
 `repoController.js:81` logs `req.params` on every `GET /repo/user/:userID` request. `index.js:98-102` logs socket join events including the userId.

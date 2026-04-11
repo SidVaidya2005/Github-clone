@@ -48,13 +48,29 @@ All request/response bodies are JSON. No authentication headers are currently en
 
 | Method | Path | Body / Params | Response |
 |--------|------|---------------|----------|
-| `POST` | `/issue/create` | `{ ... }` | Created issue |
+| `POST` | `/issue/create` | `{ title, description }` | Created `Issue` (HTTP 201) |
 | `GET` | `/issue/all` | — | `Issue[]` |
 | `GET` | `/issue/:id` | — | `Issue` |
-| `PUT` | `/issue/update/:id` | `{ ... }` | Updated issue |
-| `DELETE` | `/issue/delete/:id` | — | Deleted confirmation |
+| `PUT` | `/issue/update/:id` | `{ title, description, status }` | Updated `Issue` |
+| `DELETE` | `/issue/delete/:id` | — | `{ message: "Issue deleted" }` |
 
-> Issue model fields: see `backend/models/issueModel.js`.
+**Issue schema:**
+```
+Issue {
+  _id: ObjectId
+  title: String (required)
+  description: String (required)
+  status: "open" | "closed"  (default: "open")
+  repository: ObjectId → Repository (required)
+  createdAt: Date
+  updatedAt: Date
+}
+```
+
+**Bugs in `issueController.js` (as of last audit):**
+- `POST /issue/create` reads `repository` from `req.params.id` — but the route has no `:id` param, so `repository` is always `undefined`. Creation will fail Mongoose validation. Likely needs `req.body.repository` or a route like `/issue/create/:repoId`.
+- `GET /issue/all` also reads `req.params.id` (undefined) — returns all issues unfiltered regardless of repository.
+- `getAllIssues` and `deleteIssueById` are missing `await` on their Mongoose calls — both silently return without waiting for the DB operation.
 
 ---
 

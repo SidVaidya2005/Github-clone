@@ -10,6 +10,7 @@ npm run dev      # Vite dev server (http://localhost:5173)
 npm run build    # Production build
 npm run lint     # ESLint (max-warnings 0)
 npm run test     # Vitest
+npm run preview  # Serve the production build locally (run build first)
 ```
 
 ## Environment
@@ -35,6 +36,9 @@ All API calls are hardcoded to `http://localhost:3002`. The backend must run on 
 - **@uiw/react-heat-map** — contribution heatmap in Profile
 - **axios** — imported but not used in all components; `Dashboard.jsx` uses native `fetch()`. HTTP client usage is inconsistent across components.
 - **react-router-dom v6** — `useRoutes` + `useNavigate` (no `<Switch>`)
+
+### Broken nav link
+`Navbar.jsx` links to `/create` ("Create a Repository") but no route or component exists for this path — it renders nothing silently. Implement a `CreateRepo` component and add the route in `Routes.jsx` before using the link.
 
 ### Testing
 Vitest + `@testing-library/react`. Test files colocate with components or live under `src/`. Run a single test file: `npx vitest run <path>`.
